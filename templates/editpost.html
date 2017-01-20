@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>New post</h2>
+  <h2>Edit your post</h2>
 
     <form method="post">
       <label>
         <div>subject</div>
-        <input type="text" name="subject" value="{{subject}}">
+        <input type="text" name="subject" value="{{editSubject}}">
       </label>
 
       <label>
         <div>blog</div>
-        <textarea name="content">{{content}}</textarea>
+        <textarea name="content">{{editContent}}</textarea>
       </label>
 
       <div class="error">{{error}}</div>
