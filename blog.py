@@ -155,28 +155,19 @@ class Post(db.Model):
 class BlogFront(BlogHandler):
     def get(self):
         posts = Post.all().order('-created')
-
         self.render('front.html', posts = posts)
-
-class DeletePost(BlogHandler):
-    def get(self):
-        print("hola")
-
-class EditPost(BlogHandler):
-    def get(self):
-        self.write("holaa")
 
 class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
         post = db.get(key)
-        print("esta es la key", post_id)
 
         if not post:
             self.error(404)
             return
 
         self.render("permalink.html", post = post)
+
 
 class NewPost(BlogHandler):
     def get(self):
@@ -200,6 +191,30 @@ class NewPost(BlogHandler):
             error = "subject and content, please!"
             self.render("newpost.html", subject=subject, content=content, error=error)
 
+class EditPost(BlogHandler):
+    def get(self, post_id):
+        key = db.Key.from_path('Post', int(post_id), parent = blog_key())
+        post = db.get(key)
+        subject = post.subject
+        content = post.content
+
+        self.render("editpost.html", subject = subject, content = content)
+
+    def post(self, post_id):
+        subject = self.request.get('subject')
+        content = self.request.get('content')
+        if subject and content:
+            key = db.Key.from_path('Post', int(post_id), parent = blog_key())
+            post = db.get(key)
+            post.content = content
+            post.subject = subject
+
+            post.put()
+            self.redirect('/blog/%s' % post_id)
+
+class DeletePost(BlogHandler):
+    def get(self, post_id):
+        self.write("hola")
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
@@ -310,11 +325,11 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
-                               ('/blog/editpost', EditPost),
-                               ('/blog/deletepost', DeletePost),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
                                ('/unit3/welcome', Unit3Welcome),
+                               ('/blog/editpost/([0-9]+)', EditPost),
+                               ('/blog/deletepost/([0-9]+)', DeletePost),
                                ],
                               debug=True)
