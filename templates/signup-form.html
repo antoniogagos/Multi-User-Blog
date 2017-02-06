@@ -1,70 +1,32 @@
-<!DOCTYPE html>
+{% extends "log.html" %}
 
-<html>
-  <head>
-    <title>Sign Up</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
+{% block content %}
+      <div class="links">
+        <a class="signin-link" href="/login">SIGN IN</a>
+        <a class="signup-link checked" href="/signup">SIGN UP</a>
+      </div>
 
-  </head>
+      <form class="form" method="post">
 
-  <body>
-    <h2>Signup</h2>
-    <form method="post">
-      <table>
-        <tr>
-          <td class="label">
-            Username
-          </td>
-          <td>
-            <input type="text" name="username" value="{{username}}">
-          </td>
-          <td class="error">
-            {{error_username}}
-          </td>
-        </tr>
+        <div class="input-text logout-input">
 
-        <tr>
-          <td class="label">
-            Password
-          </td>
-          <td>
-            <input type="password" name="password" value="">
-          </td>
-          <td class="error">
-            {{error_password}}
-          </td>
-        </tr>
+          <input class="input-username logout-form" type="text" placeholder="Username" name="username" value="{{username}}">
 
-        <tr>
-          <td class="label">
-            Verify Password
-          </td>
-          <td>
-            <input type="password" name="verify" value="">
-          </td>
-          <td class="error">
-            {{error_verify}}
-          </td>
-        </tr>
 
-        <tr>
-          <td class="label">
-            Email (optional)
-          </td>
-          <td>
-            <input type="text" name="email" value="{{email}}">
-          </td>
-          <td class="error">
-            {{error_email}}
-          </td>
-        </tr>
-      </table>
+          <input class="input-password" type="password" placeholder="Password" name="password" value="">
 
-      <input type="submit">
-    </form>
-  </body>
 
-</html>
+          <input type="password" class="input-password" placeholder="Verify Password" name="verify" value="">
+
+
+          <input type="text" class="input-username logout-form" name="email" value="{{email}}" placeholder="Email (optional)">
+
+          <div class="error">{{error_username}} {{error_password}} {{error_verify}} {{error_email}}</div>
+        </div>
+
+        <div class="buttons logout-button">
+          <input id="signIn" class="sign-button" action="sign" type="submit" value="Sign Up">
+          <label class="push" for="signIn">Sign Up</label>
+        </div>
+      </form>
+{% endblock %}

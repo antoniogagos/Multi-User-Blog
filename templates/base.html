@@ -1,32 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/static/main.css" />
-
-  <title>CS 253 Blog</title>
+  <link type="text/css" rel="stylesheet" href="/static/main.css">
+  <link type="text/css" rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi User Blog</title>
 </head>
 
 <body>
-  <a href="/blog" class="main-title">
-    CS 253 Blog
-  </a>
+  <div class="container">
+    <div class="heading">
+      <a href="/blog" class="main-title">
+        Multi User Blog
+      </a>
 
-  <div class="login-area">
-    {% if user %}
-      {{user.name}} (<a class="login-link" href="/logout">logout</a>)
+      <div class="login-area">
+        {% if user %}
+          {{user.name}} (<a class="login-link" href="/logout">logout</a>)
 
-    {% else %}
-      <a class="login-link" href="/login">login</a>
-      |
-      <a class="login-link" href="/signup">signup</a>
+        {% else %}
+          <a class="login-link" href="/login">login</a>
+          |
+          <a class="login-link" href="/signup">signup</a>
 
-    {% endif %}
+        {% endif %}
+      </div>
+      <div class="newpost-btn">
+        <input id="signIn" class="sign-button" action="sign" type="submit" value="Sign In">
+        <label for="signIn"> <a href="/blog/newpost"><i class="fa fa-plus" aria-hidden="true"></i><span class="newpost-text">New Post</span></a></label>
+      </div>
+    </div>
+
+    <div id="content">
+    {% block content %}
+    {% endblock %}
+    </div>
   </div>
 
-  <div id="content">
-  {% block content %}
-  {% endblock %}
-  </div>
 </body>
 
 </html>

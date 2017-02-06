@@ -1,33 +1,17 @@
+html {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
 body {
     position: relative;
     font-family: Helvetica, Arial, sans-serif;
-    font-size: 14px;
-
-    width: 800px;
+    font-size: 15px;
     margin: 0 auto;
     padding: 10px;
     color: #333;
-}
-
-.login-area {
-    font-size: 13px;
-    color: gray;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-
-.login-link {
-    color: gray;
-    text-decoration: none;
-}
-
-.login-link:visited {
-    color: gray;
-}
-
-.login-link:hover {
-    text-decoration: underline;
+    max-width: 1000px;
 }
 
 h2 {
@@ -36,13 +20,9 @@ h2 {
     margin-bottom: 20px;
 }
 
-.error {
-    color: red;
-}
-
 label {
-  display: block;
-  font-size: 20px;
+    display: block;
+    font-size: 20px;
 }
 
 label + label {
@@ -57,60 +37,270 @@ input[type=text] {
 }
 
 textarea {
-  width: 500px;
-  height: 400px;
-  font-size: 17px;
-  font-family: monospace;
+    width: 500px;
+    height: 400px;
+    font-size: 17px;
+    font-family: monospace;
 }
 
 input[type=submit] {
-  font-size: 24px;
+    font-size: 24px;
+}
+
+a:-webkit-any-link {
+    text-decoration: none;
+    cursor: default;
+}
+
+.heading {
+    background-color: white;
 }
 
 .main-title {
     display: block;
-    color: #222;
+    color: #6D3D4E;
     font-size: 40px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    padding: 5px;
+}
+
+.login-area {
+    font-size: 18px;
+    color: black;
+    position: absolute;
+    top: 30px;
+    right: 20px;
+}
+
+.login-link {
+    color: black;
     text-decoration: none;
 }
 
+.login-link:visited {
+    color: black;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+#content {
+    background-color: white;
+    padding: 10px;
+}
+
+.error {
+    color: red;
+}
+
+.post {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s;
+    background-color: #56334b;
+}
+
+.post:hover {
+    box-shadow: 0 10px 14px 0 rgba(0,0,0,0.3);
+}
+
 .post + .post {
-    margin-top: 15px;
+    margin-top: 55px;
 }
 
 .post-heading {
     position: relative;
     border-bottom: 3px solid #666;
+    padding: 10px;
 }
 
 .post-title {
-    font-size: 24px;
+    color: white;
+    font-size: 26px;
     font-weight: bold;
 }
 
 .post-date {
     position: absolute;
-    right: 0px;
-    bottom: 0px;
+    right: 20px;
+    bottom: 10px;
     color: #999;
 
 }
 
 .post-content {
+    padding: 10px;
+    padding-bottom: 15px;
     margin-top: 5px;
+    color: white;
+}
+
+.like-icon {
+    margin-right: 40px;
+}
+
+.like-text {
+    margin-right: 30px;
+}
+
+.sign-button {
+    width: 0.1px;
+  	height: 0.1px;
+  	opacity: 0;
+  	overflow: hidden;
+  	position: absolute;
+  	z-index: -1;
+}
+
+.sign-button + label {
+    display: inline-block;
+    opacity: 0.8;
+    padding: 8px 16px;
+    font-size: 15px;
+    color: #56334b;
+    letter-spacing: 1px;
+    border-radius: 2px 2px 2px 2px;
+    border: 1px solid #56334b;
+}
+
+.sign-button:focus + label,
+.sign-button + label:hover {
+    background-color: #6d3d4e;
+    color: white;
+    transition: all 0.3s;
+}
+
+.newpost-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.newpost-btn a {
+    color: inherit;
+}
+
+.newpost-text {
+    margin-left: 8px;
+}
+
+.newpost {
+  width: 800px;
+  margin: 0 auto;
+}
+
+.newpost h2 {
+  color: #6f3147;
+}
+
+.subject-text {
+  color: #6D3D4E;
+  margin-bottom: 10px;
+}
+
+.textarea {
+  max-width: 800px;
+}
+
+.blog-text {
+  color: #6D3D4E;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.submit-post {
+  margin-top: 30px;
+}
+
+.post-comments {
+  color: white;
+  background-color: #56334b;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.3);
+}
+
+.comment {
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.comment-text {
+  font-size: 20px;
+  margin-top: 30px;
+}
+
+.user-text {
+  color: wheat;
+  font-size: 12px;
+}
+
+.add-comment textarea {
+  width: 975px;
+  max-width: 975px;
+  height: 95px;
+}
+
+.add-comment {
+  margin-top: 20px;
+}
+
+.comment-icon {
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
 }
 
 .post-icons {
-  float: right;
-  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  color: white;
+  margin-top: -25px;
 }
 
-svg:hover #deleteIcon {
-  fill: #424242;
+.post-icons > label {
+  margin-right: 15px;
 }
-svg:hover #editIcon {
-  fill: #FF8A65;
+
+.unlike-btn {
+  transform: rotate(180deg);
+}
+
+.like-nmb {
+  margin-top: 2px;
+  margin-right: 5px;
+}
+
+.post-icons .delete-btn:hover {
+  color: #000;
+}
+
+.post-icons .like-btn:hover {
+  color: green;
+}
+
+.post-icons .unlike-btn:hover {
+  color: #ff8181;
+}
+
+.post-icons a {
+  font-size: 20px;
+  color: white;
+  margin-right: 5px;
+}
+
+.post-icons .edit-btn:hover {
+  color: rgb(0, 216, 255);
+}
+
+.cancel-edit {
+  color: #001d63;
+  margin-left: 20px;
 }

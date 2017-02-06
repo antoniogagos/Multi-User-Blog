@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {{post.render() | safe}}
+
+  <div class="post-comments">
+    <div class="comment">{{c.comment_type}}
+    </div>
+  </div>
+
+  <form method="post">
+    <em>ARE YOU SURE YOU WANT TO DELETE YOUR COMMENT?</em>
+    <input id="delete" class="sign-button" type="submit" value="delete">
+    <label for="delete">DELETE</label>
+  </form>
+
+{% endblock %}

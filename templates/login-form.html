@@ -1,44 +1,22 @@
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <title>Login</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
+{% extends "log.html" %}
 
-  </head>
+{% block content %}
+    <div class="links">
+      <a class="signin-link checked" href="#">SIGN IN</a>
+      <a class="signup-link " href="/signup">SIGN UP</a>
+    </div>
 
-  <body>
-    <h2>Login</h2>
-    <form method="post">
-      <table>
-        <tr>
-          <td class="label">
-            Username
-          </td>
-          <td>
-            <input type="text" name="username" value="{{username}}">
-          </td>
-        </tr>
-
-        <tr>
-          <td class="label">
-            Password
-          </td>
-          <td>
-            <input type="password" name="password" value="">
-          </td>
-        </tr>
-      </table>
-
-      <div class="error">
-        {{error}}
+    <form class="form" method="post">
+      <div class="input-text">
+        <input class="input-username" type="text" placeholder="Username" name="username" value="{{username}}">
+        <input class="input-password" type="password" placeholder="Password" name="password" value="">
       </div>
 
-      <input type="submit">
+      <div class="error">{{error}}</div>
+      <div class="buttons">
+        <input id="signIn" class="sign-button" action="sign" type="submit" value="Sign In">
+        <label class="push" for="signIn">Sign In</label>
+      </div>
     </form>
-  </body>
-
-</html>
+{% endblock %}

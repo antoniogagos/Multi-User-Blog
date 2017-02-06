@@ -4,6 +4,7 @@ import re
 import random
 import hashlib
 import hmac
+import time
 from string import letters
 
 import webapp2
@@ -16,7 +17,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
 ## Random string used as hash secret for cookies
-secret = '$tr.orueway8923.47erij3i24$'
+secret = 'secret:D'
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
@@ -135,28 +136,33 @@ class User(db.Model):
         if u and valid_pw(name, pw, u.pw_hash):
             return u
 
-
 ##### blog stuff
 
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
 
+## Create Post entity and define its columns
 class Post(db.Model):
     subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
+    user = db.IntegerProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
+    like = db.IntegerProperty()
+    likers = db.StringListProperty()
 
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
 
         return render_str("post.html", p = self)
 
+## Render blog posts in front page ordereb by date creation
 class BlogFront(BlogHandler):
     def get(self):
         posts = Post.all().order('-created')
         self.render('front.html', posts = posts)
 
+## Getting post id and rendering it on the site
 class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -168,6 +174,125 @@ class PostPage(BlogHandler):
 
         self.render("permalink.html", post = post)
 
+    def post(self, post_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+
+        button_clicked = self.request.get("action")
+
+        if self.user:
+            user_id = self.user.key().id()
+
+            ## Check which button did user clicked and then perform in accordance with the button clicked
+            if button_clicked == "like":
+                if post.user != user_id:
+                    userStr = str(user_id)
+                    if userStr not in post.likers:
+                        post.likers.append(userStr)
+                        likeCount = post.like + 1
+                        post.like = likeCount
+                        self.render("permalink.html", post = post)
+                        post.put()
+                    else:
+                        self.render("permalink.html", post = post)
+                else:
+                    error = "You cannot like your own post"
+                    self.render("permalink.html", post = post, error = error)
+
+            elif button_clicked == "unlike":
+                if post.user != user_id:
+                    userStr = str(user_id)
+                    if userStr not in post.likers:
+                        post.likers.append(userStr)
+                        likeCount = post.like - 1
+                        post.like = likeCount
+                        self.render("permalink.html", post = post)
+                        post.put()
+                    else:
+                        self.render("permalink.html", post = post)
+                else:
+                    error = "You cannot unlike your own post."
+                    self.render("permalink.html", post = post, error = error)
+
+            elif button_clicked == "edit":
+
+                if post.user == user_id:
+                    self.redirect('/blog/editpost/%s' % post_id)
+                else:
+                    error = "You cannot edit this post!"
+                    self.render("permalink.html", post = post, error = error)
+
+            elif button_clicked == "delete":
+                if post.user == user_id:
+                    post.delete()
+                    self.redirect("/blog")
+                else:
+                    error = "You cannot delete this post"
+                    self.render("permalink.html", post = post, error = error)
+
+            elif button_clicked == "comment":
+                content = self.request.get("content")
+                AddComment(comment = post, comment_type = content, comment_user = user_id).put()
+                self.redirect("/blog/%s" % post_id)
+
+        else:
+            self.redirect("/login")
+
+## Reference to the Post model instance in order to create as many comments as user wants
+class AddComment(db.Model):
+    comment = db.ReferenceProperty(Post, collection_name = 'comment_post')
+    comment_type = db.TextProperty(required = True)
+    comment_user = db.IntegerProperty( required = True)
+
+class EditComment(BlogHandler):
+    def get(self, post_id, comment_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+        ## Loop in all post comments to get the one the user clicked
+        for c in post.comment_post:
+            if self.user:
+                if int(c.key().id()) == int(comment_id):
+                    if post.user == self.user.key().id():
+                        self.render("permalink-comments.html", c = c, post_id = post_id)
+                    else:
+                        error = "You cannot edit this comment"
+                        self.render("permalink.html", post = post, error = error)
+            else: self.redirect("/login")
+
+    def post(self, post_id, comment_id):
+        comment = self.request.get('comment')
+        if comment:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            for c in post.comment_post:
+                if int(c.key().id()) == int(comment_id):
+                    c.comment_type = comment
+                    c.put()
+
+                    self.redirect('/blog/%s' % post_id)
+
+class DeleteComment(BlogHandler):
+    def get(self, post_id, comment_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+        for c in post.comment_post:
+            if self.user:
+                if int(c.key().id()) == int(comment_id):
+                    if post.user == self.user.key().id():
+                        self.render("permalink-delete.html", c = c, post_id = post_id, post= post)
+                    else:
+                        error = "You cannot delete this comment"
+                        self.render("permalink.html", post = post, error = error)
+            else: self.redirect("/login")
+
+    def post(self, post_id, comment_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+        for c in post.comment_post:
+            if int(c.key().id()) == int(comment_id):
+                c.delete()
+
+                self.redirect('/blog/%s' % post_id)
 
 class NewPost(BlogHandler):
     def get(self):
@@ -184,21 +309,27 @@ class NewPost(BlogHandler):
         content = self.request.get('content')
 
         if subject and content:
-            p = Post(parent = blog_key(), subject = subject, content = content)
+            p = Post(parent = blog_key(), subject = subject, content = content, user = self.user.key().id(), like = 0)
             p.put()
+
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
             error = "subject and content, please!"
             self.render("newpost.html", subject=subject, content=content, error=error)
 
+
 class EditPost(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent = blog_key())
         post = db.get(key)
-        subject = post.subject
-        content = post.content
 
-        self.render("editpost.html", subject = subject, content = content)
+        if post.user == self.user.key().id():
+            subject = post.subject
+            content = post.content
+            self.render("editpost.html", subject = subject, content = content, p = post)
+        else:
+            self.redirect("/blog/login")
+
 
     def post(self, post_id):
         subject = self.request.get('subject')
@@ -214,7 +345,14 @@ class EditPost(BlogHandler):
 
 class DeletePost(BlogHandler):
     def get(self, post_id):
-        self.write("hola")
+        key = db.Key.from_path('Post', int(post_id), parent = blog_key())
+        post = db.get(key)
+        if post.user == self.user.key().id():
+            post.delete()
+            self.redirect("/blog")
+        else:
+            error = "You cannot delete this post"
+            self.render("permalink.html", post = post, error = error)
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
@@ -265,10 +403,6 @@ class Signup(BlogHandler):
     def done(self, *a, **kw):
         raise NotImplementedError
 
-class Unit2Signup(Signup):
-    def done(self):
-        self.redirect('/unit2/welcome?username=' + self.username)
-
 class Register(Signup):
     def done(self):
         #make sure the user doesn't already exist
@@ -304,32 +438,17 @@ class Logout(BlogHandler):
         self.logout()
         self.redirect('/blog')
 
-class Unit3Welcome(BlogHandler):
-    def get(self):
-        if self.user:
-            self.render('welcome.html', username = self.user.name)
-        else:
-            self.redirect('/signup')
-
-class Welcome(BlogHandler):
-    def get(self):
-        username = self.request.get('username')
-        if valid_username(username):
-            self.render('welcome.html', username = username)
-        else:
-            self.redirect('/unit2/signup')
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/unit2/signup', Unit2Signup),
-                               ('/unit2/welcome', Welcome),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
-                               ('/unit3/welcome', Unit3Welcome),
                                ('/blog/editpost/([0-9]+)', EditPost),
                                ('/blog/deletepost/([0-9]+)', DeletePost),
+                               ('/blog/([0-9]+)/([0-9]+)', EditComment),
+                               ('/blog/delete/([0-9]+)/([0-9]+)', DeleteComment),
                                ],
                               debug=True)
