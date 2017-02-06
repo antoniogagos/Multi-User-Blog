@@ -76,9 +76,11 @@ def render_post(response, post):
     response.out.write('<b>' + post.subject + '</b><br>')
     response.out.write(post.content)
 
-class MainPage(BlogHandler):
-  def get(self):
-      self.write('Hello, Udacity!')
+## Render blog posts in front page ordereb by date creation
+class BlogFront(BlogHandler):
+    def get(self):
+        posts = Post.all().order('-created')
+        self.render('front.html', posts = posts)
 
 
 ##### user stuff
@@ -156,11 +158,6 @@ class Post(db.Model):
 
         return render_str("post.html", p = self)
 
-## Render blog posts in front page ordereb by date creation
-class BlogFront(BlogHandler):
-    def get(self):
-        posts = Post.all().order('-created')
-        self.render('front.html', posts = posts)
 
 ## Getting post id and rendering it on the site
 class PostPage(BlogHandler):
@@ -439,8 +436,7 @@ class Logout(BlogHandler):
         self.redirect('/blog')
 
 
-app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/blog/?', BlogFront),
+app = webapp2.WSGIApplication([('/', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
