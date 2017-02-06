@@ -249,11 +249,10 @@ class EditComment(BlogHandler):
         for c in post.comment_post:
             if self.user:
                 if int(c.key().id()) == int(comment_id):
-                    if post.user == self.user.key().id():
+                    if c.comment_user == self.user.key().id():
                         self.render("permalink-comments.html", c = c, post_id = post_id)
                     else:
-                        error = "You cannot edit this comment"
-                        self.render("permalink.html", post = post, error = error)
+                        self.redirect("/blog/%s" % post_id)
             else: self.redirect("/login")
 
     def post(self, post_id, comment_id):
@@ -275,11 +274,10 @@ class DeleteComment(BlogHandler):
         for c in post.comment_post:
             if self.user:
                 if int(c.key().id()) == int(comment_id):
-                    if post.user == self.user.key().id():
+                    if c.comment_user == self.user.key().id():
                         self.render("permalink-delete.html", c = c, post_id = post_id, post= post)
                     else:
-                        error = "You cannot delete this comment"
-                        self.render("permalink.html", post = post, error = error)
+                        self.redirect("/blog/%s" % post_id)
             else: self.redirect("/login")
 
     def post(self, post_id, comment_id):
