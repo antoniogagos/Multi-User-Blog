@@ -222,7 +222,7 @@ class PostPage(BlogHandler):
             elif button_clicked == "delete":
                 if post.user == user_id:
                     post.delete()
-                    self.redirect("/blog")
+                    self.redirect("/")
                 else:
                     error = "You cannot delete this post"
                     self.render("permalink.html", post = post, error = error)
@@ -300,7 +300,7 @@ class NewPost(BlogHandler):
 
     def post(self):
         if not self.user:
-            self.redirect('/blog')
+            self.redirect('/')
 
         subject = self.request.get('subject')
         content = self.request.get('content')
@@ -346,7 +346,7 @@ class DeletePost(BlogHandler):
         post = db.get(key)
         if post.user == self.user.key().id():
             post.delete()
-            self.redirect("/blog")
+            self.redirect("/")
         else:
             error = "You cannot delete this post"
             self.render("permalink.html", post = post, error = error)
@@ -412,7 +412,7 @@ class Register(Signup):
             u.put()
 
             self.login(u)
-            self.redirect('/blog')
+            self.redirect('/')
 
 class Login(BlogHandler):
     def get(self):
@@ -425,7 +425,7 @@ class Login(BlogHandler):
         u = User.login(username, password)
         if u:
             self.login(u)
-            self.redirect('/blog')
+            self.redirect('/')
         else:
             msg = 'Invalid login'
             self.render('login-form.html', error = msg)
@@ -433,7 +433,7 @@ class Login(BlogHandler):
 class Logout(BlogHandler):
     def get(self):
         self.logout()
-        self.redirect('/blog')
+        self.redirect('/')
 
 
 app = webapp2.WSGIApplication([('/', BlogFront),
