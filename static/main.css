@@ -304,3 +304,7 @@ a:-webkit-any-link {
   color: #001d63;
   margin-left: 20px;
 }
+
+.text-delete-comment {
+  margin-right: 20px;
+}
