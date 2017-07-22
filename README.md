@@ -1,4 +1,5 @@
 # Multi-User-Blog
+Multi-user blog is an app made for Udacity Full Stack Web developer Nanodegree, hosted on Google App Engine, with comments and login functionality.
 
 Blog: https://multi-user-blog-158918.appspot.com/
 
